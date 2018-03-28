@@ -24,7 +24,7 @@ bool isable() {//判断是否有解，逆序数之和奇偶性相同，有解
 	for (int i = 0; i<3; i++) {
 		for (int j = 0; j<3; j++) {
 			s[k] = start.a[i][j];
-			e[k] = End.a[i][j];
+		    e[k] = End.a[i][j];
 			k++;
 		}
 	}
@@ -58,6 +58,7 @@ int a_start_h(Node *node) {  //求 h（）
 	return h;
 }
 void input() {               //输入 
+	cout << "=====输入起始图====="<<endl;
 	for (int i = 0; i<3; i++) {
 		for (int j = 0; j<3; j++) {
 			cin >> start.a[i][j];
@@ -67,6 +68,8 @@ void input() {               //输入
 			}
 		}
 	}
+	cout << endl;
+	cout << "=====输入目标图====="<<endl;
 	for (int i = 0; i<3; i++) {
 		for (int j = 0; j<3; j++) {
 			cin >> End.a[i][j];
@@ -76,6 +79,7 @@ void input() {               //输入
 			}
 		}
 	}
+	cout << endl;
 	start.g = 0;
 	start.h = a_start_h(&start);
 	start.f = start.g + start.h;
@@ -102,6 +106,8 @@ bool isend(Node *node) {         //判断是否为目标节点
 	}
 	return true;
 }
+
+
 void sort(Open_Close *open) {      //open表排序 
 	int min = 99999, min_flag = 0;
 	Open_Close temp;
@@ -117,7 +123,7 @@ void sort(Open_Close *open) {      //open表排序
 }
 void move(int flag, Node *node) {   //向四个方向扩展 
 	int temp;
-	if (flag == 1 && node->x>0) {
+	if (flag == 1 && node->x>0) {     //turn left
 		Node *n = new Node();
 		for (int i = 0; i<3; i++) {
 			for (int j = 0; j<3; j++) {
@@ -132,13 +138,13 @@ void move(int flag, Node *node) {   //向四个方向扩展
 		n->father = node;
 		n->g = node->g + 1;             //  求 g（） 
 		n->h = a_start_h(n);
-		n->f = n->g + n->h;
+		n->f = n->g + n->h;  //  求 f（） 
 		open_cnt++;
 		open_node_cnt++;
 		open[open_cnt].np = n;        //添加到open表
-		open[open_cnt].f = n->f;  //  求 f（） 
+		open[open_cnt].f = n->f;  
 	}
-	else if (flag == 2 && node->y<2) {
+	else if (flag == 2 && node->y<2) {     //go up
 		Node *n = new Node();
 		for (int i = 0; i<3; i++) {
 			for (int j = 0; j<3; j++) {
@@ -153,13 +159,13 @@ void move(int flag, Node *node) {   //向四个方向扩展
 		n->father = node;
 		n->g = node->g + 1;             //  求 g（） 
 		n->h = a_start_h(n);
-		n->f = n->g + n->h;
+		n->f = n->g + n->h;            //  求 f（）
 		open_cnt++;
 		open_node_cnt++;
 		open[open_cnt].np = n;        //添加到open表
-		open[open_cnt].f = n->f;  //  求 f（） 
+		open[open_cnt].f = n->f;   
 	}
-	else if (flag == 3 && node->x<2) {
+	else if (flag == 3 && node->x<2) {    //turn right
 		Node *n = new Node();
 		for (int i = 0; i<3; i++) {
 			for (int j = 0; j<3; j++) {
@@ -174,13 +180,13 @@ void move(int flag, Node *node) {   //向四个方向扩展
 		n->father = node;
 		n->g = node->g + 1;             //  求 g（） 
 		n->h = a_start_h(n);
-		n->f = n->g + n->h;
+		n->f = n->g + n->h;//  求 f（）
 		open_cnt++;
 		open_node_cnt++;
 		open[open_cnt].np = n;        //添加到open表
-		open[open_cnt].f = n->f;  //  求 f（） 
+		open[open_cnt].f = n->f;   
 	}
-	else if (flag == 4 && node->y>0) {
+	else if (flag == 4 && node->y>0) {    //go down
 		Node *n = new Node();
 		for (int i = 0; i<3; i++) {
 			for (int j = 0; j<3; j++) {
@@ -195,11 +201,11 @@ void move(int flag, Node *node) {   //向四个方向扩展
 		n->father = node;
 		n->g = node->g + 1;             //  求 g（） 
 		n->h = a_start_h(n);
-		n->f = n->g + n->h;
+		n->f = n->g + n->h;//  求 f（） 
 		open_cnt++;
 		open_node_cnt++;
 		open[open_cnt].np = n;        //添加到open表
-		open[open_cnt].f = n->f;  //  求 f（） 
+		open[open_cnt].f = n->f;  
 	}
 }
 void expand(Node *node) {    //节点扩展    
@@ -208,15 +214,18 @@ void expand(Node *node) {    //节点扩展
 	}
 }
 
+
 int main() {
 	input();
-	open[0].np = &start;//start放入open表 
+	int count = 0;
+	open[0].np = &start;//start放入open表			
 	open_node_cnt = 1;
 	if (isable()) {
 		while (true) {//open表不为空 
 			if (isend(open[0].np)) {
 				cout << "\n路径：\n";
 				show(open[0].np);
+				cout << count << endl;
 				break;
 			}
 			expand(open[0].np);//扩展最优节点的子节点 
@@ -224,6 +233,7 @@ int main() {
 			open[0].f = -1;
 			open_node_cnt--;
 			sort(open);   //open表排序
+			count++;
 		}
 	}
 	else cout << "无解";
