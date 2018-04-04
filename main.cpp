@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<cmath> 
 using namespace std;
+
 int open_cnt = 0;
 int open_node_cnt;//open表节点个数 
 int close_cnt = 0;
@@ -43,17 +44,17 @@ int a_start_h(Node *node) {  //求 h（）
 	for (int k = 1; k<9; k++) {
 		for (int i = 0; i<3; i++) {
 			for (int j = 0; j<3; j++) {
-				if (node->a[i][j] == k) {
+				if (node->a[i][j] == k) {  //相应开始点的下表
 					old_x = i;
 					old_y = j;
 				}
-				if (End.a[i][j] == k) {
+				if (End.a[i][j] == k) {   //相应目标的结点下标
 					End_x = i;
 					End_y = j;
 				}
 			}
 		}
-		h += abs(old_x - End_x) + abs(old_y - End_y);
+		h += abs(old_x - End_x) + abs(old_y - End_y); //计算h
 	}
 	return h;
 }
@@ -97,6 +98,8 @@ int show(Node *node) {               //显示
 	}
 	cout << "==============\n\n";
 }
+
+
 bool isend(Node *node) {         //判断是否为目标节点 
 	for (int i = 0; i<3; i++) {
 		for (int j = 0; j<3; j++) {
@@ -111,16 +114,19 @@ bool isend(Node *node) {         //判断是否为目标节点
 void sort(Open_Close *open) {      //open表排序 
 	int min = 99999, min_flag = 0;
 	Open_Close temp;
-	for (int i = 0; i <= open_cnt; i++) {
+	for (int i = 0; i <= open_cnt; i++) {      
 		if (min>open[i].f&&open[i].f>0) {
 			min = open[i].f;
 			min_flag = i;
 		}
 	}
-	temp = open[min_flag];
+	temp = open[min_flag];            
 	open[min_flag] = open[0];
 	open[0] = temp;
 }
+
+
+
 void move(int flag, Node *node) {   //向四个方向扩展 
 	int temp;
 	if (flag == 1 && node->x>0) {     //turn left
@@ -144,6 +150,7 @@ void move(int flag, Node *node) {   //向四个方向扩展
 		open[open_cnt].np = n;        //添加到open表
 		open[open_cnt].f = n->f;  
 	}
+
 	else if (flag == 2 && node->y<2) {     //go up
 		Node *n = new Node();
 		for (int i = 0; i<3; i++) {
@@ -217,7 +224,6 @@ void expand(Node *node) {    //节点扩展
 
 int main() {
 	input();
-	int count = 0;
 	open[0].np = &start;//start放入open表			
 	open_node_cnt = 1;
 	if (isable()) {
@@ -225,7 +231,7 @@ int main() {
 			if (isend(open[0].np)) {
 				cout << "\n路径：\n";
 				show(open[0].np);
-				cout << count << endl;
+				cout << open[0].np->g << endl;
 				break;
 			}
 			expand(open[0].np);//扩展最优节点的子节点 
@@ -233,7 +239,6 @@ int main() {
 			open[0].f = -1;
 			open_node_cnt--;
 			sort(open);   //open表排序
-			count++;
 		}
 	}
 	else cout << "无解";
